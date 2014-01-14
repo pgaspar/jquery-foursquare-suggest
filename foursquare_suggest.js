@@ -1,5 +1,5 @@
 (function( $ ) {
-	
+
 	//keep track of which results list item is selected
 	//TODO change term to "results list"
 	var resultsListIndex = 0;
@@ -9,13 +9,13 @@
 	var data;
 	var resultsList;
 	var resultsListID = ""
-	
+
 	$.fn.fs_suggest = function(options) {
-		
+
 		var defaults = {
 			url	: 'https://api.foursquare.com/v2/venues/suggestcompletion?', // i suppose you could change this...
 			ll : '37.787920,-122.407458', //default to SF since it's well known
-			v : '20120515', //the date of the foursquare api version
+			v : '20120609', //the date of the foursquare api version
 			limit : 10, //perhaps an option to ignore limits
 			intent: 'browse', //Looking for geo-specific results
 			radius: 80000, //default to foursquare max of 80,000 meters (ll and radius are required with 'browse' intent)
@@ -26,46 +26,46 @@
 								//and hopefully to adjust in a responsive way
 		}
 		//TODO would be cool to include a "schema : 'something.something.minivenues" in case your results had a different json structure
-		
+
 		opts = $.extend(defaults, options);
-		
-		
+
+
 		this.keydown(function(event) {
-			
+
 			var code = event.keyCode || event.which;
-			
+
 			if (code == 13) {	//enter key is pressed
 				onEnterKey();
 			}
 		});
-		
+
 		//TODO make this flexible enough to deal with other key events
 		//wait for keyup to get total entered text
 		this.keyup(function(event) {
-			
+
 			//("key up");
 			var code = event.keyCode || event.which;
-			
+
 			//enter keys and and arrow keys should be caught by keydown
 			if(code == 13) {
 				//console.log("13 cancelling");
 		    	return false;
 		    }
-		
+
 			//only listen for up and down
 			if(code == 38 || code == 40) {
 				//onArrowKeyPressed(event.keyCode);
 				return false
 			}
-		
+
 			//console.log("keyup");
 			//console.log($(this).val());
 			justEntered = $(this).val();
-			
+
 			//since foursquare will only return minivenues on 3 characters
 			//check if the value entered is 3 or more characters
 			if(justEntered.length >= 3) {
-			
+
 				//figure out if it's a character or not
 				var c = String.fromCharCode(code);
 				var isWordcharacter = c.match(/\w/);
@@ -82,67 +82,67 @@
 				lastEntered = justEntered;
 			}
 		});
-		
-		
-		
+
+
+
 		//add global keyup on document
 		this.keydown(function(event) {
 			//console.log("window key up");
 			var code = event.keyCode || event.which;
-			
+
 			if(code == 13) {
 				//console.log("13 cancelling");
 				enterKey();
 		    	event.preventDefault();
 		    	return false;
 		    }
-		
+
 			//only listen for up and down
 			if(code == 38 || code == 40) {
 				onArrowKeyPressed(event.keyCode);
 			}
 		});
-		
+
 		//listen for clicks or mouse moves away from the results list and hide it?
-		
+
 		//add the results ul (empty for now)
 		//TODO probably should be able to customize id name or even class name
 		//that way results could be populated to an already existing container
 		addResultsList(this);
 	};
-	
+
 	function onEnterKey() {
 		//figure out if anything is selected
 		if(resultsListActive) {
 			//console.log("resulstListActive true: click " + "#" + resultsList.attr("id") + " .selected a");
 			//there must be a selected item in the list so trigger it's click event
-			
+
 			window.location = $("#" + resultsList.attr("id") + " .selected a").attr("href");
 			//return false; //stop default
 		}
 	}
-	
+
 	function addResultsList(el) {
 		el.after("<ul id='fs_search_results'></ul>");
 		//now add up and down listener to toggle and select results
-		
+
 		resultsList = $("#fs_search_results");
 	}
-	
+
 	var fallback = false;
 	function callFoursquareSuggestion() {
 		//TODO check for options and set up some error checking
-		url = opts.url 
+		url = opts.url
 				+ "query=" + justEntered
-				+ "&ll=" + opts.ll 
-				+ "&v=" + opts.v 
+				+ "&ll=" + opts.ll
+				+ "&v=" + opts.v
 				+ "&limit=" + opts.limit
 				+ "&intent=" + opts.intent
 				+ "&radius=" + opts.radius
 				+ "&client_id=" + opts.client_id
 				+ "&client_secret=" + opts.client_secret;
 		safe_url = encodeURI(url);
-		$.getJSON(safe_url, function() { 
+		$.getJSON(safe_url, function() {
 			//console.log("get search results ajax called");
 		})
 		.success(function(_data, status, xhr) {
@@ -164,20 +164,20 @@
 			//"this application doesn't MAKE errors"
 	    });
 	}
-	
+
 	// private methods?
 	function showResults() {
 		html = buildResultsList();
-		//add or re-add 
+		//add or re-add
 		//reset selection
 		resultsListIndex = 0;
 		resultsList.empty();
 		resultsList.html(html);
 	}
-	
+
 	function buildResultsList() {
 		minivenues = data.response.minivenues;
-		
+
 		if(minivenues && minivenues.length > 0) {
 			results = "";
 			for (var i = 0; i < minivenues.length; i++) {
@@ -188,33 +188,33 @@
 		} else {
 			results = "<ul><li>Couldn't find that venue.</li></ul>";
 		}
-		
+
 		return results;
 	}
-	
+
 	function onArrowKeyPressed(code) {
 		//TODO maybe add a check to be sure focus in on input, since it would be annoying
 		//to activate this list if you were focused elsewhere
-		
+
 		//check for down or up key
-		
+
 		liLength = $("#" + resultsList.attr("id") + " li").size();
-		
+
 		//up
-		if (code == 38) { 
+		if (code == 38) {
 		   	upArrowPressed();
 	       	return false;
 	    }
-		
+
 		//down
-		if (code == 40) { 
+		if (code == 40) {
 		   	downArrowPressed();
 			return false;
 	    }
 	}
-	
+
 	function downArrowPressed() {
-		//console.log( "down pressed" );	
+		//console.log( "down pressed" );
 		if(resultsListActive) {
 			//console.log("active");
 			//if active and last item in list
@@ -228,7 +228,7 @@
 				//console.log("results list selected index " + resultsListSelectedIndex);
 				setSelected(resultsListSelectedIndex + 1);
 			}
-			
+
 		} else {
 			//console.log("not active, activate");
 			//activate the list
@@ -236,10 +236,10 @@
 			setSelected(0);
 		}
 	}
-	
+
 	function upArrowPressed() {
 		//console.log( "up pressed" );
-		
+
 		if(resultsListActive) {
 			//get selected index
 			if(resultsListSelectedIndex == 0) {
@@ -248,22 +248,22 @@
 			} else {
 				setSelected(resultsListSelectedIndex - 1);
 			}
-			
+
 		} //else: they pressed up while cursor focus on input so ignore it
 	}
-	
+
 	function deactivateResultsList() {
 		resultsListSelectedIndex = 0;
 		resultsListActive = false;
 		$("#" + resultsList.attr("id") + " li").removeClass("selected");
 	}
-	
+
 	function setSelected(index) {
 		//console.log("set selected: " + index);
 		resultsListSelectedIndex = index;
 		$("#" + resultsList.attr("id") + " li").removeClass("selected");
 		$("#" + resultsList.attr("id") + " li").eq(index).addClass("selected");
 	}
-	
-	
+
+
 })( jQuery );
