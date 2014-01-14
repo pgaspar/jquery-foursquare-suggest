@@ -173,6 +173,12 @@
 		resultsListIndex = 0;
 		resultsList.empty();
 		resultsList.html(html);
+
+		$("li.venue", resultsList).each(function() {
+			$(this).on('click', function() {
+				setSelected($(this).index());
+			});
+		});
 	}
 
 	function buildResultsList() {
@@ -183,7 +189,7 @@
 			for (var i = 0; i < minivenues.length; i++) {
 				v = minivenues[i]
 				//TODO this should be customizable, at least for urls
-				results += "<li class='venue'><a name='" + escape(v.name) + "' data-city='" + v.location.city +"' data-state='" + v.location.state +"' data-address='" + v.location.address +"' data-zip='" + v.location.postalCode +"' data-country='" + v.location.country + "' data-lat='" + v.location.lat +"' data-lng='" + v.location.lng +"' data-id='" + v.id +"'>" + v.name + "</a>- <span class='loc'>"+ v.location.city +", "+ v.location.state +"</span></li>";
+				results += "<li class='venue'><a data-name='" + escape(v.name) + "' data-city='" + v.location.city +"' data-address='" + v.location.address +"' data-lat='" + v.location.lat +"' data-lng='" + v.location.lng +"' data-id='" + v.id +"'>" + v.name + "</a></li>";
 			}
 		} else {
 			results = "<ul><li>Couldn't find that venue.</li></ul>";
