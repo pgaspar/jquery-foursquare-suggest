@@ -8,7 +8,8 @@
 	var lastEntered = "";
 	var data;
 	var resultsList;
-	var resultsListID = ""
+	var resultsListID = "";
+	var inputNode;
 
 	$.fn.fs_suggest = function(options) {
 
@@ -28,7 +29,7 @@
 		//TODO would be cool to include a "schema : 'something.something.minivenues" in case your results had a different json structure
 
 		opts = $.extend(defaults, options);
-
+		inputNode = this;
 
 		this.keydown(function(event) {
 
@@ -177,6 +178,9 @@
 		$("li.venue", resultsList).each(function() {
 			$(this).on('click', function() {
 				setSelected($(this).index());
+
+				// Trigger callback event
+				inputNode.trigger('venue_selected.fq_suggest', {venueNode: $(this)});
 			});
 		});
 	}
@@ -189,7 +193,7 @@
 			for (var i = 0; i < minivenues.length; i++) {
 				v = minivenues[i]
 				//TODO this should be customizable, at least for urls
-				results += "<li class='venue'><a data-name='" + escape(v.name) + "' data-city='" + v.location.city +"' data-address='" + v.location.address +"' data-lat='" + v.location.lat +"' data-lng='" + v.location.lng +"' data-id='" + v.id +"'>" + v.name + "</a></li>";
+				results += "<li class='venue'><a data-name='" + v.name + "' data-city='" + v.location.city +"' data-address='" + v.location.address +"' data-lat='" + v.location.lat +"' data-lng='" + v.location.lng +"' data-id='" + v.id +"'>" + v.name + "</a></li>";
 			}
 		} else {
 			results = "<ul><li>Couldn't find that venue.</li></ul>";
