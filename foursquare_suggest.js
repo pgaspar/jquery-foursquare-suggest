@@ -70,20 +70,17 @@
 			//check if the value entered is 3 or more characters
 			if(justEntered.length >= 3) {
 
-				//figure out if it's a character or not
-				var c = String.fromCharCode(code);
-				var isWordcharacter = c.match(/\w/);
-
-				if(isWordcharacter && lastEntered != justEntered) {
+				if(lastEntered != justEntered) {
 					//send it off to foursquare
 					console.log("call foursquare");
 					callFoursquareSuggestion();
-				} else {
-					//clear what was entered before
-					$("#fs_search_results").empty();
 				}
 
 				lastEntered = justEntered;
+			}
+			else {
+				//clear what was entered before
+				hideAndCleanup();
 			}
 		});
 
