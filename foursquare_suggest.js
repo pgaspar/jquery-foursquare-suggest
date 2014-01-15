@@ -39,7 +39,7 @@
 			var code = event.keyCode || event.which;
 
 			if (code == 13) {	//enter key is pressed
-				onEnterKey();
+				onEnterKey(event);
 			}
 		});
 
@@ -96,10 +96,8 @@
 
 			if(code == 13) {
 				//console.log("13 cancelling");
-				enterKey();
-		    	event.preventDefault();
-		    	return false;
-		    }
+				onEnterKey(event);
+		  }
 
 			//only listen for up and down
 			if(code == 38 || code == 40) {
@@ -115,15 +113,13 @@
 		addResultsList(this);
 	};
 
-	function onEnterKey() {
+	function onEnterKey(event) {
 		//figure out if anything is selected
 		if(resultsListActive) {
 			//console.log("resulstListActive true: click " + "#" + resultsList.attr("id") + " .selected a");
-			//there must be a selected item in the list so trigger it's click event
-
-			window.location = $("#" + resultsList.attr("id") + " .selected a").attr("href");
-			//return false; //stop default
+			submitVenue();
 		}
+		event.preventDefault();
 	}
 
 	function addResultsList(el) {
