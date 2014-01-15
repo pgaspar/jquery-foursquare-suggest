@@ -181,9 +181,7 @@
 		$("li.venue", resultsList).each(function() {
 			$(this).on('click', function() {
 				setSelected($(this).index());
-
-				// Trigger callback event
-				inputNode.trigger('venue_selected.fq_suggest', {venueNode: $(this)});
+				submitVenue();
 			});
 		});
 	}
@@ -276,6 +274,25 @@
 		resultsListSelectedIndex = index;
 		$("#" + resultsList.attr("id") + " li").removeClass("selected");
 		$("#" + resultsList.attr("id") + " li").eq(index).addClass("selected");
+	}
+
+	function submitVenue() {
+		selectedVenue = $("#" + resultsList.attr("id") + " li.selected");
+
+		// Trigger callback event
+		inputNode.trigger('venue_selected.fq_suggest', {venueNode: selectedVenue});
+
+		// Clear search query
+		inputNode.val('');
+
+		// Hide list and cleanup
+		hideAndCleanup();
+	}
+
+	function hideAndCleanup() {
+		deactivateResultsList();
+		resultsList.empty();
+		lastEntered = '';
 	}
 
 
