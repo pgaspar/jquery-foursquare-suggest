@@ -31,6 +31,9 @@
 		opts = $.extend(defaults, options);
 		inputNode = this;
 
+		// Hide browser's default autocomplete
+		inputNode.attr('autocomplete', 'off');
+
 		this.keydown(function(event) {
 
 			var code = event.keyCode || event.which;
