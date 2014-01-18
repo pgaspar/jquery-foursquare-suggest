@@ -171,9 +171,9 @@
 		resultsList.empty();
 		resultsList.html(html);
 
-		$("li.venue", resultsList).each(function() {
+		$("li.venue a", resultsList).each(function() {
 			$(this).on('click', function() {
-				setSelected($(this).index());
+				setSelected($(this).parent('li').index());
 				submitVenue();
 			});
 		});
@@ -270,7 +270,7 @@
 	}
 
 	function submitVenue() {
-		selectedVenue = $("#" + resultsList.attr("id") + " li.selected");
+		selectedVenue = $("#" + resultsList.attr("id") + " li.selected a");
 
 		// Trigger callback event
 		inputNode.trigger('venue_selected.fq_suggest', {venueNode: selectedVenue});
